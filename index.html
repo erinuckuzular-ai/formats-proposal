@@ -274,8 +274,11 @@
   .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
   .draft{color:var(--red)}
 
-  @keyframes titleflick{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .hero h1.flicking{animation:titleflick .09s var(--ease)}
+  @keyframes titleflick{
+    0%{opacity:0;transform:translateY(36px)}
+    100%{opacity:1;transform:none}
+  }
+  .hero h1.flicking{animation:titleflick .55s var(--ease)}
 
   @media(prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
@@ -935,7 +938,7 @@ if(COARSE){
       if(settled)return;
       idx=(idx+1)%titles.length;
       renderHero(titles[idx],true);
-    },160);
+    },2200);
   }
 
   // settle when r12 scrolls into view
