@@ -188,6 +188,13 @@
   .ts-list li.done .tt{opacity:.45;text-decoration:line-through}
   .ts-list .who{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ash-d)}
 
+  /* crew tracker cards */
+  .crew-card{background:rgba(255,255,255,.04);border:1px solid var(--hl-d);border-radius:10px;padding:10px 14px;font-family:var(--f-mono);min-width:160px;flex:1}
+  .crew-card .cn{font-size:12px;font-weight:500;color:var(--bone);letter-spacing:.04em}
+  .crew-card .ct{font-size:11px;color:var(--red);margin-top:2px;letter-spacing:.02em}
+  .crew-card .ce{font-size:10px;color:var(--ash-d);margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
+  .crew-card.done{opacity:.4}
+
   /* objections */
   .obj{border-top:1px solid var(--hl-p);margin-top:36px}
   .obj__row{border-bottom:1px solid var(--hl-p)}
@@ -506,14 +513,16 @@
       <!-- task setter -->
       <div class="toolpanel" id="tp-ts">
         <div class="ts-bar"><i id="tsBar"></i></div>
+        <!-- live crew tracker -->
+        <div id="crewTrack" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px"></div>
         <ul class="ts-list" id="tsList">
-          <li data-who="Producer"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Brief the talent</span><span class="who">Producer</span></li>
-          <li data-who="Travel"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Issue train tickets</span><span class="who">Travel</span></li>
-          <li data-who="Runner"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Track arrivals</span><span class="who">Runner</span></li>
-          <li data-who="Camera"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Roll cameras</span><span class="who">Camera</span></li>
-          <li data-who="Edit"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Push rushes to edit</span><span class="who">Edit</span></li>
+          <li data-who="Erin" data-task="Brief the talent"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Brief the talent</span><span class="who">Erin</span></li>
+          <li data-who="Travel" data-task="Issue train tickets"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Issue train tickets</span><span class="who">Travel</span></li>
+          <li data-who="Jerry" data-task="Editing rushes" data-elapsed="3960"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Editing rushes</span><span class="who">Jerry</span></li>
+          <li data-who="Camera" data-task="Roll cameras"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Roll cameras</span><span class="who">Camera</span></li>
+          <li data-who="Jerry" data-task="Push rushes to edit"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Push rushes to edit</span><span class="who">Jerry</span></li>
         </ul>
-        <p class="cs-note" style="font-family:var(--f-mono);font-size:11px;color:var(--ash-d);margin-top:16px">Tick tasks off. This is the engine behind the stag-do app, it ran the whole show.</p>
+        <p class="cs-note" style="font-family:var(--f-mono);font-size:11px;color:var(--ash-d);margin-top:16px">Tick tasks off. Cards above show who's doing what and how long they've been at it.</p>
       </div>
 
       <!-- wheel -->
@@ -799,11 +808,63 @@ if(COARSE){
   });
 }
 
-/* ===== task setter ===== */
+/* ===== task setter + crew tracker ===== */
 (function(){
   const list=document.getElementById('tsList'),bar=document.getElementById('tsBar'),items=[...list.children];
-  function upd(){const done=items.filter(i=>i.classList.contains('done')).length;bar.style.width=(done/items.length*100)+'%';}
+  const crewEl=document.getElementById('crewTrack');
+
+  // elapsed seconds per person (seeded for Jerry)
+  const elapsed={};
+  items.forEach(li=>{
+    const who=li.getAttribute('data-who');
+    if(!elapsed[who])elapsed[who]=parseInt(li.getAttribute('data-elapsed')||'0',10);
+  });
+
+  function fmtElapsed(s){
+    const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+    if(h>0)return h+'h '+m+'m';
+    if(m>0)return m+' min '+sec+'s';
+    return sec+'s';
+  }
+
+  function renderCrew(){
+    // gather active (non-done) tasks per person
+    const active={};
+    items.forEach(li=>{
+      if(li.classList.contains('done'))return;
+      const who=li.getAttribute('data-who'),task=li.getAttribute('data-task')||li.querySelector('.tt').textContent;
+      if(!active[who])active[who]={task,elapsed:elapsed[who]||0};
+    });
+    crewEl.innerHTML='';
+    Object.entries(active).forEach(([who,{task,elapsed:e}])=>{
+      const card=document.createElement('div');
+      card.className='crew-card';
+      card.innerHTML=`<div class="cn">${who}</div><div class="ct">${task}</div><div class="ce" data-who="${who}">for ${fmtElapsed(e)}</div>`;
+      crewEl.appendChild(card);
+    });
+  }
+
+  function upd(){
+    const done=items.filter(i=>i.classList.contains('done')).length;
+    bar.style.width=(done/items.length*100)+'%';
+    renderCrew();
+  }
+
   items.forEach(li=>li.addEventListener('click',()=>{li.classList.toggle('done');upd();}));
+
+  // tick elapsed time for active people
+  setInterval(()=>{
+    const active=new Set();
+    items.forEach(li=>{if(!li.classList.contains('done'))active.add(li.getAttribute('data-who'));});
+    active.forEach(who=>{elapsed[who]=(elapsed[who]||0)+1;});
+    crewEl.querySelectorAll('.ce[data-who]').forEach(el=>{
+      const who=el.getAttribute('data-who');
+      const task=items.find(li=>!li.classList.contains('done')&&li.getAttribute('data-who')===who);
+      if(task)el.textContent='for '+fmtElapsed(elapsed[who]);
+    });
+  },1000);
+
+  upd();
 })();
 
 /* ===== wheel (two modes) ===== */
