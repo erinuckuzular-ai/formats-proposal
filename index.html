@@ -99,6 +99,9 @@
   /* shipped / roadmap lists */
   .deliv{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,56px);margin-top:48px}
   @media(max-width:820px){.deliv{grid-template-columns:1fr}}
+  .deliv--4col{grid-template-columns:repeat(4,1fr);gap:18px}
+  @media(max-width:900px){.deliv--4col{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.deliv--4col{grid-template-columns:1fr}}
   .deliv h3{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);padding-bottom:16px;border-bottom:1px solid var(--hl-d)}
   .litem{padding:18px 0;border-bottom:1px solid var(--hl-d);display:flex;gap:14px;align-items:flex-start;cursor:none;transition:padding-left .3s var(--ease)}
   .litem:hover{padding-left:8px}
@@ -419,7 +422,7 @@
     <div class="eyebrow reveal"><span class="dot"></span> 05 · I've done this before, at the BBC</div>
     <h2 class="title reveal d1">The role already exists. <span class="serif">I've worked in it.</span></h2>
     <p class="sub ink reveal d1">At the BBC I was in exactly this kind of team, building new formats and innovations. I know what this job looks like done well.</p>
-    <div class="deliv reveal d1" style="grid-template-columns:repeat(4,1fr);gap:18px">
+    <div class="deliv deliv--4col reveal d1">
       <div class="panel"><span class="tag">Format</span><h4 style="font-size:18px">Automated micro-podcasts</h4></div>
       <div class="panel red"><span class="tag">Live</span><h4 style="font-size:18px">The BBC's first ever live election stream</h4></div>
       <div class="panel"><span class="tag">Early</span><h4 style="font-size:18px">Animated push notifications, before Sora</h4></div>
@@ -750,15 +753,17 @@ const rooms=[...document.querySelectorAll('.room, .footer')];
     g.appendChild(c);g.appendChild(t);svg.appendChild(g);
     const sel=()=>{nodes.forEach(n=>n.classList.remove('active'));lines.forEach(l=>l.classList.remove('active'));g.classList.add('active');lines[i].classList.add('active');
       document.getElementById('hubPanel').innerHTML=`<div class="pn">${d.name}</div><h5>What I'd build</h5><ul>${d.builds.map(b=>`<li>${b}</li>`).join('')}</ul>`;};
-    g.addEventListener('click',sel);g.addEventListener('mouseenter',sel);nodes.push(g);});
+    g.addEventListener('click',sel);if(!COARSE)g.addEventListener('mouseenter',sel);nodes.push(g);});
   if(window._bindCur)window._bindCur();
 })();
 
 /* ===== stacks ===== */
 (function(){
-  const desc=document.getElementById('stackDesc'),base=desc.textContent;
+  const desc=document.getElementById('stackDesc');
+  function activate(ch){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));ch.classList.add('on');desc.innerHTML='<b>'+ch.textContent+'</b> — '+ch.getAttribute('data-d');}
   document.querySelectorAll('#stack .chip, #stack2 .chip').forEach(ch=>{
-    ch.addEventListener('mouseenter',()=>{document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));ch.classList.add('on');desc.innerHTML='<b>'+ch.textContent+'</b> — '+ch.getAttribute('data-d');});
+    ch.addEventListener('mouseenter',()=>activate(ch));
+    ch.addEventListener('click',()=>activate(ch));
   });
 })();
 
@@ -786,6 +791,13 @@ const rooms=[...document.querySelectorAll('.room, .footer')];
     if(window._bindCur)window._bindCur();
   });
 })();
+
+/* ===== litem tap on touch ===== */
+if(COARSE){
+  document.querySelectorAll('.litem').forEach(li=>{
+    li.addEventListener('click',()=>{const o=li.classList.contains('open');document.querySelectorAll('.litem').forEach(l=>l.classList.remove('open'));if(!o)li.classList.add('open');});
+  });
+}
 
 /* ===== task setter ===== */
 (function(){
