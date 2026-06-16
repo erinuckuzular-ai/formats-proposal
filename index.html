@@ -307,6 +307,7 @@
   <div class="wrap">
     <div class="eyebrow reveal"><span class="dot"></span> <span id="byline">A Proposal · Erin → [Manager]</span></div>
     <h1 class="reveal d1" id="heroTitle">New Formats &amp;<br><span class="serif">innovations</span> producer</h1>
+    <p id="titleHint" style="font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ash-d);margin-top:14px;transition:opacity .4s">[ choosing title — pick yours at the end ↓ ]</p>
     <p class="lead reveal d2">Someone here should own <span class="serif">what's next</span>. <span class="q">Right now nobody does. I'd like to.</span></p>
     <div class="scrollcue reveal d3" aria-hidden="true"><span class="line"></span> Scroll to read</div>
   </div>
@@ -912,7 +913,7 @@ if(COARSE){
 
 /* ===== title try-on + hero flicker ===== */
 (function(){
-  const hero=document.getElementById('heroTitle'),askT=document.getElementById('askTitle');
+  const hero=document.getElementById('heroTitle'),askT=document.getElementById('askTitle'),hint=document.getElementById('titleHint');
   const buttons=[...document.querySelectorAll('#tryon button')];
   const titles=buttons.map(b=>b.getAttribute('data-t'));
   let settled=false,flickTimer=null,idx=0;
@@ -930,6 +931,7 @@ if(COARSE){
     renderHero(t,true);
     buttons.forEach((b,j)=>b.classList.toggle('on',j===i));
     askT.innerHTML=t+' <span class="serif">(promotion, banding reviewed accordingly)</span>';
+    if(hint){hint.style.opacity='0';setTimeout(()=>hint.style.display='none',400);}
   }
 
   // start flickering through titles
