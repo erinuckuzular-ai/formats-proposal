@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>New Formats &amp; Innovations Producer — A Proposal</title>
+<meta name="description" content="A proposal for a New Formats and Innovations Producer role." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --void:#0d0c0b; --void-2:#161311;
+    --paper:#ece7dd; --paper-2:#f3efe6;
+    --ink:#161311; --bone:#fbfaf7;
+    --ash-d:#a39e95; --ash-p:#5f5a51;
+    --hl-d:rgba(251,250,247,.14); --hl-p:rgba(22,19,17,.14);
+    --red:#fe1e34;
+    --f-disp:'Inter Tight',system-ui,sans-serif;
+    --f-serif:'Instrument Serif',Georgia,serif;
+    --f-mono:'IBM Plex Mono',ui-monospace,monospace;
+    --m:7vw; --ease:cubic-bezier(.22,1,.36,1);
+    --maxw:1180px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+  body{background:var(--void);color:var(--bone);font-family:var(--f-disp);font-size:17px;line-height:1.6;
+    overflow-x:hidden;cursor:none}
+  @media(pointer:coarse){body{cursor:auto}}
+  ::selection{background:var(--red);color:var(--bone)}
+  a{color:inherit;text-decoration:none}
+  .serif{font-family:var(--f-serif);font-style:italic}
+  .red{color:var(--red)}
+
+  /* progress + cursor */
+  .progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--red);z-index:8500}
+  .cur-dot,.cur-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:9000;border-radius:50%;transform:translate(-50%,-50%);will-change:transform}
+  .cur-dot{width:6px;height:6px;background:var(--red)}
+  .cur-ring{width:34px;height:34px;border:1px solid var(--red);opacity:.45;transition:width .3s var(--ease),height .3s var(--ease),opacity .3s,background .3s}
+  .cur-ring.hov{width:62px;height:62px;opacity:1;background:rgba(254,30,52,.07)}
+  .cur-ring .lab{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);opacity:0;transition:opacity .2s}
+  .cur-ring.hov .lab{opacity:1}
+  @media(pointer:coarse){.cur-dot,.cur-ring{display:none}}
+
+  /* rail */
+  .rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+  .rail button{appearance:none;background:none;border:none;padding:0;cursor:none;display:flex;align-items:center;gap:9px}
+  .rail .pip{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.3;transition:all .3s var(--ease)}
+  .rail .rl{font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;opacity:0;transform:translateX(5px);transition:all .3s var(--ease);white-space:nowrap}
+  .rail button:hover .rl{opacity:.7;transform:none}
+  .rail.on-paper{color:var(--ink)} .rail.on-dark{color:var(--bone)}
+  .rail button[aria-current="true"] .pip{opacity:1;background:var(--red);transform:scale(1.5)}
+  .rail button[aria-current="true"] .rl{opacity:1;color:var(--red)}
+  @media(max-width:900px){.rail{display:none}}
+
+  /* topbar */
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:180;display:flex;justify-content:space-between;align-items:center;padding:20px var(--m);mix-blend-mode:difference;color:#fff}
+  .topbar .mark{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .topbar .mark b{font-weight:500}
+  .topbar .meta{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+  @media(max-width:560px){.topbar .meta{display:none}}
+
+  /* rooms */
+  .room{position:relative;padding:clamp(80px,11vh,150px) var(--m);overflow:hidden}
+  .room--dark{background:var(--void);color:var(--bone)}
+  .room--paper{background:var(--paper);color:var(--ink)}
+  .wrap{max-width:var(--maxw);margin:0 auto;position:relative;z-index:2}
+  .bignum{position:absolute;top:clamp(24px,5vh,60px);right:var(--m);font-family:var(--f-mono);font-weight:500;
+    font-size:clamp(80px,16vw,200px);line-height:1;color:var(--red);opacity:.07;z-index:1;pointer-events:none;letter-spacing:-.03em}
+
+  .eyebrow{font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;display:inline-flex;align-items:center;gap:10px;color:var(--red);margin-bottom:22px}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:beat 2.6s var(--ease) infinite}
+  @keyframes beat{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.55);opacity:.55}}
+
+  h2.title{font-weight:600;letter-spacing:-.03em;line-height:1.02;font-size:clamp(30px,5vw,60px);max-width:18ch;position:relative;display:inline-block}
+  h2.title .serif{font-weight:400}
+  h2.title::after{content:"";position:absolute;left:0;bottom:-14px;height:3px;width:0;background:var(--red);transition:width .8s var(--ease) .25s}
+  h2.title.lit::after{width:60px}
+  .sub{font-size:clamp(17px,1.5vw,20px);line-height:1.55;max-width:54ch;margin-top:26px;color:var(--ash-d)}
+  .room--paper .sub{color:var(--ash-p)}
+  .sub.bone{color:var(--bone)} .room--paper .sub.ink{color:var(--ink)}
+
+  .grid{display:grid;gap:clamp(36px,5vw,72px);align-items:center}
+  .grid.split{grid-template-columns:1fr 1fr}
+  .grid.split.wide-left{grid-template-columns:1.1fr .9fr}
+  @media(max-width:880px){.grid.split,.grid.split.wide-left{grid-template-columns:1fr}}
+
+  .ill{width:100%;height:auto;display:block;color:var(--bone)}
+  .room--paper .ill{color:var(--ink)}
+
+  .panel{border:1px solid var(--hl-d);border-radius:14px;padding:clamp(22px,2.4vw,32px);background:rgba(255,255,255,.02)}
+  .room--paper .panel{border-color:var(--hl-p);background:rgba(0,0,0,.02)}
+  .panel.red{border-color:var(--red)}
+  .panel .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:14px}
+  .panel h4{font-size:21px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+  .panel p{margin-top:12px;font-size:15.5px;line-height:1.6;color:var(--ash-d)}
+  .room--paper .panel p{color:var(--ash-p)}
+
+  /* shipped / roadmap lists */
+  .deliv{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,56px);margin-top:48px}
+  @media(max-width:820px){.deliv{grid-template-columns:1fr}}
+  .deliv h3{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);padding-bottom:16px;border-bottom:1px solid var(--hl-d)}
+  .litem{padding:18px 0;border-bottom:1px solid var(--hl-d);display:flex;gap:14px;align-items:flex-start;cursor:none;transition:padding-left .3s var(--ease)}
+  .litem:hover{padding-left:8px}
+  .litem .mk{font-family:var(--f-mono);font-size:13px;color:var(--red);margin-top:2px;flex-shrink:0}
+  .litem .tx{font-size:16.5px;font-weight:500;letter-spacing:-.01em;line-height:1.35}
+  .litem .tx span{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.02em;color:var(--ash-d);font-weight:400;margin-top:5px;text-transform:none;max-height:0;overflow:hidden;opacity:0;transition:all .4s var(--ease)}
+  .litem:hover .tx span,.litem.open .tx span{max-height:80px;opacity:1;margin-top:8px}
+  .demoflag{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);border:1px solid var(--red);border-radius:20px;padding:3px 9px;margin-left:8px;white-space:nowrap}
+
+  /* hub */
+  .hub svg{width:100%;height:auto;overflow:visible}
+  .hub-node{cursor:none}
+  .hub-node circle{transition:all .3s var(--ease)}
+  .hub-node text{font-family:var(--f-mono);font-size:11px;letter-spacing:.02em;fill:var(--ash-p);transition:fill .3s}
+  .hub-node.active circle{fill:var(--red);stroke:var(--red)}
+  .hub-node.active text{fill:var(--bone)}
+  .hub-line{stroke:var(--hl-p);stroke-width:1.5;transition:stroke .3s,stroke-width .3s;stroke-dasharray:240;stroke-dashoffset:240}
+  .hub.lit .hub-line{stroke-dashoffset:0;transition:stroke-dashoffset 1s var(--ease),stroke .3s,stroke-width .3s}
+  .hub-line.active{stroke:var(--red);stroke-width:2.5}
+  .hub-center circle{fill:var(--paper-2);stroke:var(--red);stroke-width:2}
+  .hub-center text{font-family:var(--f-disp);font-weight:600;fill:var(--ink)}
+  .hub-panel{margin-top:0;border-left:2px solid var(--red);padding-left:22px;min-height:150px}
+  .hub-panel .pn{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+  .hub-panel h5{font-size:23px;font-weight:600;letter-spacing:-.01em;margin-bottom:14px}
+  .hub-panel ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+  .hub-panel li{font-family:var(--f-mono);font-size:12px;padding:8px 13px;border:1px solid var(--hl-p);border-radius:30px;color:var(--ash-p)}
+
+  /* stack */
+  .stacklabel{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ash-d);margin:30px 0 12px}
+  .stack{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{font-family:var(--f-mono);font-size:13px;padding:10px 16px;border:1px solid var(--hl-d);border-radius:30px;color:var(--ash-d);cursor:none;transition:all .25s var(--ease)}
+  .chip:hover,.chip.on{border-color:var(--red);color:var(--bone);background:rgba(254,30,52,.06)}
+  .chip.key{color:var(--bone);border-color:var(--bone)}
+  .stack-desc{margin-top:22px;min-height:50px;font-size:16px;line-height:1.55;color:var(--ash-d);max-width:62ch}
+  .stack-desc b{color:var(--bone);font-weight:600}
+
+  /* toolbox */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+  .tab{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:12px 18px;border:1px solid var(--hl-d);border-radius:30px;background:none;color:var(--ash-d);cursor:none;transition:all .25s}
+  .tab.on{background:var(--bone);color:var(--void);border-color:var(--bone)}
+  .toolpanel{display:none}.toolpanel.on{display:block;animation:fade .5s var(--ease)}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* wheel */
+  .wheel-modes{display:flex;gap:8px;justify-content:center;margin-bottom:22px}
+  .wheel-modes button{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 14px;border-radius:30px;border:1px solid var(--hl-d);background:none;color:var(--ash-d);cursor:none;transition:all .25s}
+  .wheel-modes button.on{border-color:var(--red);color:var(--red)}
+  .wheel-stage{position:relative;aspect-ratio:1;width:100%;max-width:320px;margin:0 auto}
+  .wheel{position:absolute;inset:0;border-radius:50%;border:1px solid var(--hl-d);transition:transform 5s cubic-bezier(.12,.78,.16,1);box-shadow:0 24px 70px rgba(0,0,0,.45)}
+  .wheel-seg-label{position:absolute;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;color:var(--bone)}
+  .wheel-cap{position:absolute;left:50%;top:50%;width:54px;height:54px;transform:translate(-50%,-50%);border-radius:50%;background:var(--void);border:1px solid var(--hl-d);display:grid;place-items:center;z-index:4}
+  .wheel-cap .dot{width:9px;height:9px;border-radius:50%;background:var(--red);animation:beat 2.6s var(--ease) infinite}
+  .wheel-pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:5;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:18px solid var(--red)}
+  .wheel-spin{appearance:none;cursor:none;border:1px solid var(--bone);background:transparent;color:var(--bone);font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:14px 26px;border-radius:40px;transition:background .25s,color .25s;margin:24px auto 0;display:block}
+  .wheel-spin:hover{background:var(--bone);color:var(--void)}
+  .wheel-out{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ash-d);margin-top:16px;min-height:18px;text-align:center}
+  .wheel-out b{color:var(--red);font-weight:500}
+
+  /* note-taker */
+  .nt-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+  .nt-time{font-family:var(--f-mono);font-size:clamp(34px,6vw,52px);font-weight:500;letter-spacing:-.02em;color:var(--bone)}
+  .nt-time.rec{color:var(--red)}
+  .nt-btns{display:flex;gap:8px}
+  .nt-btns button{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:11px 16px;border-radius:30px;border:1px solid var(--bone);background:none;color:var(--bone);cursor:none;transition:all .25s}
+  .nt-btns button.mark{border-color:var(--red);color:var(--red)}
+  .nt-btns button:hover{background:var(--bone);color:var(--void)}
+  .nt-btns button.mark:hover{background:var(--red);color:#fff}
+  .nt-list{list-style:none;border-top:1px solid var(--hl-d);max-height:240px;overflow:auto}
+  .nt-list li{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--hl-d)}
+  .nt-list .ts{font-family:var(--f-mono);font-size:13px;color:var(--red);flex-shrink:0}
+  .nt-list input{flex:1;background:none;border:none;color:var(--bone);font-family:var(--f-disp);font-size:15px;cursor:none;outline:none}
+  .nt-empty{font-family:var(--f-mono);font-size:12px;color:var(--ash-d);padding:18px 0}
+
+  /* task setter */
+  .ts-bar{height:4px;background:var(--hl-d);border-radius:4px;overflow:hidden;margin-bottom:22px}
+  .ts-bar i{display:block;height:100%;width:0;background:var(--red);transition:width .5s var(--ease)}
+  .ts-list{list-style:none}
+  .ts-list li{display:flex;gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid var(--hl-d);cursor:none}
+  .ts-list .box{width:22px;height:22px;border:1px solid var(--bone);border-radius:6px;flex-shrink:0;display:grid;place-items:center;transition:all .25s}
+  .ts-list li.done .box{background:var(--red);border-color:var(--red)}
+  .ts-list .box svg{width:14px;height:14px;opacity:0;transition:opacity .2s}
+  .ts-list li.done .box svg{opacity:1}
+  .ts-list .tt{font-size:16px;font-weight:500;transition:opacity .25s}
+  .ts-list li.done .tt{opacity:.45;text-decoration:line-through}
+  .ts-list .who{margin-left:auto;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ash-d)}
+
+  /* objections */
+  .obj{border-top:1px solid var(--hl-p);margin-top:36px}
+  .obj__row{border-bottom:1px solid var(--hl-p)}
+  .obj__q{display:flex;gap:16px;align-items:center;font-size:clamp(18px,2.1vw,26px);font-weight:500;letter-spacing:-.01em;cursor:none;padding:24px 0;transition:color .3s}
+  .obj__q:hover{color:var(--red)}
+  .obj__q .mk{font-family:var(--f-mono);font-size:12px;color:var(--red)}
+  .obj__q .pl{margin-left:auto;font-family:var(--f-mono);font-size:20px;color:var(--red);transition:transform .35s var(--ease)}
+  .obj__row.open .obj__q .pl{transform:rotate(45deg)}
+  .obj__a{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
+  .obj__a p{font-size:16px;line-height:1.6;color:var(--ash-p);max-width:74ch;padding-left:30px;padding-bottom:0;opacity:0;transition:opacity .4s}
+  .obj__row.open .obj__a{max-height:460px}
+  .obj__row.open .obj__a p{opacity:1;padding-bottom:26px}
+
+  /* ROI */
+  .roi{border:1px solid var(--hl-p);border-radius:16px;padding:clamp(24px,3vw,38px);background:rgba(0,0,0,.02)}
+  .roi .ctl{margin-bottom:26px}
+  .roi label{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ash-p);margin-bottom:12px}
+  .roi label b{font-family:var(--f-disp);font-size:20px;color:var(--ink);font-weight:600;letter-spacing:-.01em}
+  .roi input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--hl-p);border-radius:2px;cursor:none}
+  .roi input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--red);cursor:none;border:3px solid var(--paper)}
+  .roi input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--red);border:3px solid var(--paper)}
+  .roi-out{border-top:1px solid var(--hl-p);margin-top:8px;padding-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:560px){.roi-out{grid-template-columns:1fr}}
+  .roi-out .big{font-size:clamp(40px,6vw,66px);font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--red)}
+  .roi-out .cap{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ash-p);margin-top:10px}
+  .roi-note{font-family:var(--f-mono);font-size:11px;color:var(--ash-p);margin-top:22px;line-height:1.6}
+
+  /* metrics */
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);margin-top:18px}
+  @media(max-width:880px){.metrics{grid-template-columns:1fr}}
+  .metric-col h3{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);padding-bottom:18px;border-bottom:1px solid var(--hl-p)}
+  .metric-col ul{list-style:none;margin-top:6px}
+  .metric-col li{padding:20px 0;border-bottom:1px solid var(--hl-p);font-size:18px;font-weight:500;letter-spacing:-.01em;line-height:1.3}
+  .metric-col li .fig{color:var(--red)}
+  .metric-col li small{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ash-p);margin-top:7px;font-weight:400}
+
+  /* ask */
+  .ask{margin-top:36px;border-top:1px solid var(--hl-d)}
+  .ask__row{display:grid;grid-template-columns:52px 1fr;gap:18px;padding:26px 0;border-bottom:1px solid var(--hl-d);align-items:start;transition:padding-left .3s var(--ease)}
+  .ask__row:hover{padding-left:12px}
+  @media(max-width:620px){.ask__row{grid-template-columns:1fr;gap:6px}}
+  .ask__row .k{font-family:var(--f-mono);font-size:12px;color:var(--red);letter-spacing:.1em;padding-top:5px}
+  .ask__row .label{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ash-d);display:block;margin-bottom:7px}
+  .ask__row .val{font-size:clamp(18px,1.9vw,23px);font-weight:500;letter-spacing:-.01em;line-height:1.3}
+  .ask__row .val .serif{font-weight:400}
+  .ask__row .note{font-size:15px;line-height:1.6;color:var(--ash-d);margin-top:9px;max-width:64ch}
+  .cert{margin-top:12px;display:inline-flex;align-items:center;gap:9px;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);border:1px solid var(--red);border-radius:30px;padding:8px 13px}
+  /* title try-on */
+  .tryon{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .tryon button{font-family:var(--f-mono);font-size:11.5px;padding:9px 14px;border-radius:30px;border:1px solid var(--hl-d);background:none;color:var(--ash-d);cursor:none;transition:all .25s}
+  .tryon button.on,.tryon button:hover{border-color:var(--red);color:var(--bone);background:rgba(254,30,52,.06)}
+  .tryon-note{font-family:var(--f-mono);font-size:11px;color:var(--ash-d);margin-top:12px}
+
+  /* footer */
+  .footer{background:var(--void);color:var(--bone);padding:clamp(72px,11vh,140px) var(--m) 44px;position:relative;overflow:hidden}
+  .footer .big{font-weight:600;letter-spacing:-.03em;line-height:1;font-size:clamp(40px,8vw,104px);max-width:14ch}
+  .footer .big .serif{font-weight:400}
+  .footer .cta{display:inline-flex;align-items:center;gap:12px;margin-top:36px;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--bone);border-radius:40px;padding:16px 26px;cursor:none;transition:background .25s,color .25s}
+  .footer .cta:hover{background:var(--bone);color:var(--void)}
+  .footer__base{margin-top:56px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--hl-d);font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ash-d)}
+
+  /* hero */
+  .hero{min-height:100svh;display:flex;align-items:center;padding-top:120px;padding-bottom:70px}
+  .hero .eyebrow{margin-bottom:30px}
+  .hero h1{font-weight:600;letter-spacing:-.035em;line-height:.98;font-size:clamp(38px,7.2vw,92px)}
+  .hero h1 .serif{font-weight:400}
+  .hero .lead{font-size:clamp(17px,1.6vw,21px);line-height:1.5;max-width:42ch;margin-top:26px;color:var(--bone)}
+  .hero .lead .q{color:var(--ash-d)}
+  .hero .scrollcue{margin-top:46px;font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-d);display:flex;align-items:center;gap:12px}
+  .hero .scrollcue .line{width:50px;height:1px;background:var(--ash-d);position:relative;overflow:hidden}
+  .hero .scrollcue .line::after{content:"";position:absolute;inset:0;width:40%;background:var(--red);animation:slide 2.4s infinite}
+  @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+  .draft{color:var(--red)}
+
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1!important;transform:none!important;transition:none!important}
+    .scrollcue .line::after,.eyebrow .dot,.wheel-cap .dot{animation:none!important}
+    .cur-dot,.cur-ring{display:none!important}body{cursor:auto}
+    .hub-line{stroke-dashoffset:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="cur-ring" id="cring"><span class="lab" id="clab"></span></div>
+<div class="cur-dot" id="cdot"></div>
+
+<div class="topbar">
+  <div class="mark"><b>FORMATS</b> &amp; INNOVATION</div>
+  <div class="meta">A PROPOSAL · 2026</div>
+</div>
+
+<nav class="rail on-dark" id="rail" aria-label="Sections"></nav>
+
+<!-- HERO -->
+<header class="room room--dark hero" id="r0" data-label="Open">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> <span id="byline">A Proposal · Erin → [Manager]</span></div>
+    <h1 class="reveal d1" id="heroTitle">New Formats &amp;<br><span class="serif">innovations</span> producer</h1>
+    <p class="lead reveal d2">Someone here should own <span class="serif">what's next</span>. <span class="q">Right now nobody does. I'd like to.</span></p>
+    <div class="scrollcue reveal d3" aria-hidden="true"><span class="line"></span> Scroll to read</div>
+  </div>
+</header>
+
+<!-- 01 -->
+<section class="room room--paper" id="r1" data-label="Where this comes from">
+  <span class="bignum">01</span>
+  <div class="wrap">
+    <div class="grid split wide-left">
+      <div>
+        <div class="eyebrow reveal"><span class="dot"></span> 01 · Where this comes from</div>
+        <h2 class="title reveal d1">The work has <span class="serif">no home</span></h2>
+        <p class="sub ink reveal d1">Every few weeks a show needs something built. A call sheet that works on a phone on shoot day. A quiz that plays properly on screen. A way to see who's drowning in edits. There's no one whose job it is to do any of it.</p>
+        <p class="sub reveal d2">It can land on me, and it's some of the work I enjoy most, but right now it has no owner and no home. This is a proposal to give it one.</p>
+      </div>
+      <div class="reveal d2" aria-hidden="true">
+        <svg class="ill" viewBox="0 0 400 360" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="60" y="40" width="280" height="200" rx="12"/>
+          <line x1="60" y1="76" x2="340" y2="76"/>
+          <circle cx="78" cy="58" r="4" fill="currentColor" stroke="none"/><circle cx="94" cy="58" r="4"/><circle cx="110" cy="58" r="4"/>
+          <rect x="84" y="100" width="100" height="14" rx="4"/>
+          <rect x="84" y="128" width="160" height="10" rx="4" opacity=".5"/>
+          <rect x="84" y="150" width="130" height="10" rx="4" opacity=".5"/>
+          <rect x="84" y="186" width="80" height="26" rx="13" stroke="#fe1e34"/>
+          <text x="100" y="203" font-family="IBM Plex Mono" font-size="11" fill="#fe1e34" stroke="none">BUILD</text>
+          <path d="M250 300 q30 -50 70 -70" stroke="#fe1e34"/>
+          <circle cx="338" cy="282" r="6" fill="#fe1e34" stroke="none"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="room room--dark" id="r2" data-label="The gap">
+  <span class="bignum">02</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 02 · The gap</div>
+    <h2 class="title reveal d1">Every show solves the same problems <span class="serif">alone</span></h2>
+    <div class="grid split" style="margin-top:48px">
+      <div class="reveal d1">
+        <p class="sub bone">One goes off-site and improvises a call sheet. One goes abroad and the handover gets cobbled together. One wants a quiz and there's no asset for it.</p>
+        <p class="sub" style="margin-top:18px">Knowledge and tools don't travel between pods. And when a workflow breaks, there's no one to take it to. No shared layer underneath the slate, and no one whose job is to look forward.</p>
+      </div>
+      <div class="reveal d2" aria-hidden="true">
+        <svg class="ill" viewBox="0 0 400 320" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="70" cy="70" r="30"/><text x="55" y="74" font-family="IBM Plex Mono" font-size="10" fill="currentColor" stroke="none">Show</text>
+          <circle cx="320" cy="60" r="30"/><text x="305" y="64" font-family="IBM Plex Mono" font-size="10" fill="currentColor" stroke="none">Show</text>
+          <circle cx="100" cy="250" r="30"/><text x="85" y="254" font-family="IBM Plex Mono" font-size="10" fill="currentColor" stroke="none">Show</text>
+          <circle cx="310" cy="250" r="30"/><text x="295" y="254" font-family="IBM Plex Mono" font-size="10" fill="currentColor" stroke="none">Show</text>
+          <circle cx="200" cy="160" r="34" stroke="#fe1e34" stroke-dasharray="5 6"/>
+          <text x="193" y="167" font-family="IBM Plex Mono" font-size="22" fill="#fe1e34" stroke="none">?</text>
+          <path d="M95 95 L175 145" stroke="#fe1e34" stroke-dasharray="3 7" opacity=".5"/>
+          <path d="M295 85 L228 140" stroke="#fe1e34" stroke-dasharray="3 7" opacity=".5"/>
+          <path d="M125 230 L180 185" stroke="#fe1e34" stroke-dasharray="3 7" opacity=".5"/>
+          <path d="M285 230 L225 185" stroke="#fe1e34" stroke-dasharray="3 7" opacity=".5"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="room room--paper" id="r3" data-label="The proposal">
+  <span class="bignum">03</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 03 · The proposal</div>
+    <h2 class="title reveal d1">One role. It builds for <span class="serif">every show.</span></h2>
+    <p class="sub ink reveal d1">I keep producing one show, and I want to. That closeness is the point: it's how I know what to build. The rest of my time builds the tools every other show plugs into. <b>Tap a show below</b> to see what that looks like.</p>
+    <div class="grid split wide-left" style="margin-top:48px">
+      <div class="hub reveal d1" id="hub">
+        <svg viewBox="0 0 600 440" id="hubSvg" aria-label="Interactive system map"></svg>
+      </div>
+      <div>
+        <div class="hub-panel" id="hubPanel">
+          <div class="pn">Tap a show</div>
+          <h5>One builder, serving the whole slate</h5>
+          <p class="sub ink" style="margin-top:0">Each show keeps its own producer. I sit in the middle and build the shared tools, on brand, on demand. Select any show to see the kind of thing I'd ship for it.</p>
+        </div>
+        <div class="panel red reveal d2" style="margin-top:28px">
+          <span class="tag">On the engineers</span>
+          <h4>A producer who builds. Not a second engineering team.</h4>
+          <p>Engineers cost a lot, aren't producers, and need a lot of tending. They're brilliant for big, analytical, scaling builds, work I'd happily do alongside them. This is the other thing: fast, format-first tools from inside the show, with a producer's instinct for what the show and the talent need.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="room room--dark" id="r4" data-label="Why now">
+  <span class="bignum">04</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 04 · Why now</div>
+    <h2 class="title reveal d1">A producer couldn't do this <span class="serif">two years ago</span></h2>
+    <p class="sub bone reveal d1">The reason it's possible now is the tooling, and it isn't one tool. The field moves monthly and the role uses whatever's best. <b style="color:var(--red);font-weight:500">Hover any of them</b> to see what it does.</p>
+    <div class="stacklabel reveal d2">AI build tools · tool-agnostic by design</div>
+    <div class="stack reveal d2" id="stack">
+      <span class="chip key" data-d="The model I build and reason with. The brain of every tool.">Claude</span>
+      <span class="chip key" data-d="Claude in the terminal. Writes, edits and runs whole projects, so one producer can ship software.">Claude Code</span>
+      <span class="chip" data-d="Vercel's generative UI tool. Builds working interfaces straight from a prompt.">V0</span>
+      <span class="chip" data-d="OpenAI's coding agent. Another hand on the build when it helps.">Codex</span>
+      <span class="chip" data-d="AI-native code editor. Fast, in-context editing across a whole project.">Cursor</span>
+      <span class="chip" data-d="Agentic IDE that plans and executes multi-step builds.">Windsurf</span>
+      <span class="chip" data-d="Google's agentic dev platform. Newer, worth being early to.">Antigravity</span>
+      <span class="chip" data-d="Copilot, Replit, Bolt, Lovable and whatever lands next. Not married to any one of them.">+ more</span>
+    </div>
+    <div class="stacklabel reveal d2">The stack underneath</div>
+    <div class="stack reveal d2" id="stack2">
+      <span class="chip" data-d="Where the code lives, with full version history. Pushes straight to hosting.">GitHub</span>
+      <span class="chip" data-d="Turns a project into a live link in seconds. Works on every device, redeploys on every change.">Vercel</span>
+      <span class="chip" data-d="The database and logins behind anything with memory: guest lists, schedules, the hive.">Supabase</span>
+      <span class="chip" data-d="WhatsApp and SMS workflows. Home for the guest-outreach approval agent.">OpenClaw</span>
+      <span class="chip" data-d="Payments, for when innovation means a new revenue format.">Stripe</span>
+      <span class="chip" data-d="An AI reviewer that checks every change before it goes live. The second pair of eyes.">CodeRabbit</span>
+    </div>
+    <p class="stack-desc reveal d2" id="stackDesc">None of this needed an engineer five years ago, because it didn't exist in this form. The stack is the reason a producer can credibly own this now.</p>
+  </div>
+</section>
+
+<!-- 05 -->
+<section class="room room--paper" id="r5" data-label="Track record">
+  <span class="bignum">05</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 05 · I've done this before, at the BBC</div>
+    <h2 class="title reveal d1">The role already exists. <span class="serif">I've worked in it.</span></h2>
+    <p class="sub ink reveal d1">At the BBC I was in exactly this kind of team, building new formats and innovations. I know what this job looks like done well.</p>
+    <div class="deliv reveal d1" style="grid-template-columns:repeat(4,1fr);gap:18px">
+      <div class="panel"><span class="tag">Format</span><h4 style="font-size:18px">Automated micro-podcasts</h4></div>
+      <div class="panel red"><span class="tag">Live</span><h4 style="font-size:18px">The BBC's first ever live election stream</h4></div>
+      <div class="panel"><span class="tag">Early</span><h4 style="font-size:18px">Animated push notifications, before Sora</h4></div>
+      <div class="panel"><span class="tag">Partner</span><h4 style="font-size:18px">AI video, working direct with Runway</h4></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="room room--dark" id="r6" data-label="Already building">
+  <span class="bignum">06</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 06 · And I'm already doing it here</div>
+    <h2 class="title reveal d1">Shipped, and <span class="serif">a queue behind it</span></h2>
+    <p class="sub bone reveal d1">This isn't theoretical. The list below is already live or already started. <b style="color:var(--red);font-weight:500">Hover any line</b> for detail.</p>
+    <div class="deliv reveal d1">
+      <div>
+        <h3>Shipped</h3>
+        <div class="litem"><span class="mk">✓</span><div class="tx">Live schedule system<span>Replaced one of our core spreadsheets with a live tool.</span></div></div>
+        <div class="litem"><span class="mk">✓</span><div class="tx">The pod &amp; campaign hive<span>Full production oversight in one place, and it flags when editors are over or under worked.</span></div></div>
+        <div class="litem"><span class="mk">✓</span><div class="tx">Back Side stag-do task-setter app <span class="demoflag">can demo</span><span>Issued the train tickets, briefed the talent, tracked them, and ran the whole show.</span></div></div>
+        <div class="litem"><span class="mk">✓</span><div class="tx">NYC pub golf app<span>The companion tool for the pub golf vlog shoot.</span></div></div>
+        <div class="litem"><span class="mk">✓</span><div class="tx">Cross-show script runner<span>Fill in your show and it presents the run as a slideshow. Works across pods.</span></div></div>
+      </div>
+      <div>
+        <h3>Next on the bench</h3>
+        <div class="litem"><span class="mk">→</span><div class="tx">Live note-taker for recordings<span>Shared notes and timestamps as you record, easy to hand off. Demo below.</span></div></div>
+        <div class="litem"><span class="mk">→</span><div class="tx">Smarter call sheets<span>Faster to build, clearer to read, live on every device.</span></div></div>
+        <div class="litem"><span class="mk">→</span><div class="tx">Easier guest outreach<span>Less manual chasing, a cleaner pipeline.</span></div></div>
+        <div class="litem"><span class="mk">→</span><div class="tx">Easier studio booking<span>One place to see and book studio time.</span></div></div>
+        <div class="litem"><span class="mk">→</span><div class="tx">Universal handovers<span>One handover format every pod shares.</span></div></div>
+        <div class="litem"><span class="mk">→</span><div class="tx">Clear resourcing view<span>Which editors are free or booked, so no one gets overworked.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section class="room room--paper" id="r7" data-label="Objections, met">
+  <span class="bignum">07</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 07 · The objections, met</div>
+    <h2 class="title reveal d1">Straight <span class="serif">answers</span></h2>
+    <div class="obj reveal d1" id="obj">
+      <div class="obj__row open"><div class="obj__q"><span class="mk">Q</span> Can't all producers just learn this?<span class="pl">+</span></div><div class="obj__a"><p>They can learn pieces, but they're at capacity delivering shows. Spread across everyone it happens slowly, inconsistently, and nobody owns it. One person who builds once and shares scales faster than the whole team learning in fragments.</p></div></div>
+      <div class="obj__row"><div class="obj__q"><span class="mk">Q</span> Why not just use the engineers?<span class="pl">+</span></div><div class="obj__a"><p>Engineers cost a lot of money, aren't producers, and need a lot of tending. They're the right call for big, analytical, scaling builds, and I'd happily work alongside them on those. But the day-to-day, format-first tools belong with someone inside the show, at a speed and cost that doesn't fit an engineering roadmap.</p></div></div>
+      <div class="obj__row"><div class="obj__q"><span class="mk">Q</span> Is it really a role, with enough work?<span class="pl">+</span></div><div class="obj__a"><p>The backlog is the proof. I'm already doing this in the cracks of another job, and the shipped-plus-queued list is longer than one person's spare time.</p></div></div>
+      <div class="obj__row"><div class="obj__q"><span class="mk">Q</span> Who covers the show?<span class="pl">+</span></div><div class="obj__a"><p>I keep producing one. Never off the floor.</p></div></div>
+      <div class="obj__row"><div class="obj__q"><span class="mk">Q</span> Is it worth it?<span class="pl">+</span></div><div class="obj__a"><p>Yes. In hours returned, spreadsheets retired, tools we don't buy, and an edge competitors don't have. There's a calculator further down to put real numbers on it.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="room room--dark" id="r8" data-label="Play with it">
+  <span class="bignum">08</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 08 · Live demos, built into this page</div>
+    <h2 class="title reveal d1">Don't take my word for it. <span class="serif">Play.</span></h2>
+    <p class="sub bone reveal d1">The whole argument is that I build interactive tools, so here are three of them, running right now. Switch between them.</p>
+
+    <div class="panel reveal d1" style="margin-top:34px;border-radius:18px;padding:clamp(24px,3vw,40px)">
+      <div class="tabs" id="tabs">
+        <button class="tab on" data-tab="nt" data-cur="open">Live note-taker</button>
+        <button class="tab" data-tab="ts" data-cur="open">Task setter</button>
+        <button class="tab" data-tab="wh" data-cur="open">Spin the wheel</button>
+      </div>
+
+      <!-- note-taker -->
+      <div class="toolpanel on" id="tp-nt">
+        <div class="nt-top">
+          <div class="nt-time" id="ntTime">00:00</div>
+          <div class="nt-btns">
+            <button id="ntToggle">Start</button>
+            <button class="mark" id="ntMark">Mark moment</button>
+          </div>
+        </div>
+        <ul class="nt-list" id="ntList"><li class="nt-empty">Press start, then mark moments. Each one timestamps a note you can edit and share.</li></ul>
+      </div>
+
+      <!-- task setter -->
+      <div class="toolpanel" id="tp-ts">
+        <div class="ts-bar"><i id="tsBar"></i></div>
+        <ul class="ts-list" id="tsList">
+          <li data-who="Producer"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Brief the talent</span><span class="who">Producer</span></li>
+          <li data-who="Travel"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Issue train tickets</span><span class="who">Travel</span></li>
+          <li data-who="Runner"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Track arrivals</span><span class="who">Runner</span></li>
+          <li data-who="Camera"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Roll cameras</span><span class="who">Camera</span></li>
+          <li data-who="Edit"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span><span class="tt">Push rushes to edit</span><span class="who">Edit</span></li>
+        </ul>
+        <p class="cs-note" style="font-family:var(--f-mono);font-size:11px;color:var(--ash-d);margin-top:16px">Tick tasks off. This is the engine behind the stag-do app, it ran the whole show.</p>
+      </div>
+
+      <!-- wheel -->
+      <div class="toolpanel" id="tp-wh">
+        <div class="wheel-modes" id="wheelModes">
+          <button class="on" data-mode="tools">What I build</button>
+          <button data-mode="vlog">Vlog ideas</button>
+        </div>
+        <div class="wheel-stage">
+          <div class="wheel-pointer"></div>
+          <div class="wheel" id="wheel"></div>
+          <div class="wheel-cap"><span class="dot"></span></div>
+        </div>
+        <button class="wheel-spin" id="spinBtn" data-cur="spin">Spin</button>
+        <div class="wheel-out" id="wheelOut" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 -->
+<section class="room room--paper" id="r9" data-label="Room to grow">
+  <span class="bignum">09</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 09 · Room to grow</div>
+    <h2 class="title reveal d1">The title says formats &amp; innovations <span class="serif">on purpose</span></h2>
+    <p class="sub ink reveal d1">AI is the main tool in the kit right now. But the remit is staying ahead: building relationships with the AI companies so we're early not late, testing new tools and formats before anyone else, and formats that have nothing to do with AI at all. We start focused and let it earn its expansion.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="room room--dark" id="r10" data-label="Fits the structure">
+  <span class="bignum">10</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 10 · Fits the incoming structure</div>
+    <h2 class="title reveal d1">A build layer under <span class="serif">Head of Production</span></h2>
+    <div class="grid split" style="margin-top:46px">
+      <p class="sub bone reveal d1">Head of Production, Strategy and Talent all land at the same level. I sit under Head of Production and build the tools the whole team uses. I make new leadership's plans executable faster, without adding headcount that needs onboarding. Best done now, while the structure's still being drawn.</p>
+      <div class="reveal d2" aria-hidden="true">
+        <svg class="ill" viewBox="0 0 440 300" fill="none" stroke="currentColor" stroke-width="1.5">
+          <!-- three equal heads -->
+          <rect x="20" y="24" width="120" height="44" rx="8" stroke="#fe1e34"/><text x="38" y="50" font-family="IBM Plex Mono" font-size="10.5" fill="#fe1e34" stroke="none">Head of Prod</text>
+          <rect x="160" y="24" width="120" height="44" rx="8" opacity=".6"/><text x="182" y="50" font-family="IBM Plex Mono" font-size="10.5" fill="currentColor" stroke="none" opacity=".75">Head of Strat</text>
+          <rect x="300" y="24" width="120" height="44" rx="8" opacity=".6"/><text x="320" y="50" font-family="IBM Plex Mono" font-size="10.5" fill="currentColor" stroke="none" opacity=".75">Head of Talent</text>
+          <!-- this role under head of prod -->
+          <path d="M80 68 V120" stroke="#fe1e34"/>
+          <rect x="20" y="120" width="120" height="44" rx="8" stroke="#fe1e34"/><text x="38" y="146" font-family="IBM Plex Mono" font-size="10.5" fill="#fe1e34" stroke="none">This role</text>
+          <!-- tools beneath this role -->
+          <path d="M50 164 V206" stroke="#fe1e34"/><path d="M80 164 V206" stroke="#fe1e34"/><path d="M110 164 V206" stroke="#fe1e34"/>
+          <circle cx="50" cy="216" r="9" stroke="#fe1e34"/><circle cx="80" cy="216" r="9" stroke="#fe1e34"/><circle cx="110" cy="216" r="9" stroke="#fe1e34"/>
+          <text x="24" y="252" font-family="IBM Plex Mono" font-size="10" fill="#fe1e34" stroke="none">tools for every show</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="room room--paper" id="r11" data-label="Scales to Global">
+  <span class="bignum">11</span>
+  <div class="wrap">
+    <div class="grid split wide-left">
+      <div>
+        <div class="eyebrow reveal"><span class="dot"></span> 11 · It scales to Global</div>
+        <h2 class="title reveal d1">Fellas first. Then it <span class="serif">travels.</span></h2>
+        <p class="sub ink reveal d1">Everything I build here, Global studios can use, and when Global needs support I can step in. Most studios buy generic tools. We'd have someone building bespoke ones that fit how we actually work.</p>
+      </div>
+      <div class="reveal d2" aria-hidden="true">
+        <svg class="ill" viewBox="0 0 400 260" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="80" cy="170" r="22" stroke="#fe1e34"/><text x="55" y="210" font-family="IBM Plex Mono" font-size="11" fill="currentColor" stroke="none">Fellas</text>
+          <circle cx="320" cy="90" r="22"/><text x="298" y="55" font-family="IBM Plex Mono" font-size="11" fill="currentColor" stroke="none">Global</text>
+          <path d="M100 158 Q200 40 300 95" stroke="#fe1e34" stroke-dasharray="4 6"/>
+          <circle cx="200" cy="92" r="5" fill="#fe1e34" stroke="none" id="travelDot"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="room room--dark" id="r12" data-label="The ask">
+  <span class="bignum">12</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 12 · The ask</div>
+    <h2 class="title reveal d1">Make it <span class="serif">official</span></h2>
+    <div class="ask reveal d1">
+      <div class="ask__row"><span class="k">A</span><div><span class="label">Title</span><div class="val" id="askTitle">New Formats &amp; Innovations Producer <span class="serif">(promotion, banding reviewed accordingly)</span></div>
+        <div class="tryon" id="tryon">
+          <button class="on" data-t="New Formats &amp; Innovations Producer">New Formats &amp; Innovations Producer</button>
+          <button data-t="Innovation Producer">Innovation Producer</button>
+          <button data-t="Production Innovation Lead">Production Innovation Lead</button>
+          <button data-t="Formats &amp; Systems Producer">Formats &amp; Systems Producer</button>
+          <button data-t="Creative Technologist">Creative Technologist</button>
+        </div>
+        <p class="tryon-note">Try a title on, it updates the headline at the top too. Working title can change.</p>
+      </div></div>
+      <div class="ask__row"><span class="k">B</span><div><span class="label">Production</span><div class="val">Produce one show. Your call which.</div></div></div>
+      <div class="ask__row"><span class="k">C</span><div><span class="label">Development budget</span><div class="val">My standard £1k, spent on the courses that train me toward the cert below.</div><p class="note">A clear path: structured courses on Claude, Claude Code, agents and MCP, building toward a recognised credential rather than scattered learning.</p></div></div>
+      <div class="ask__row"><span class="k">D</span><div><span class="label">Target</span><div class="val">Claude Certified Architect.</div><p class="note">Anthropic's official certification, launched March 2026, for designing production systems with Claude. The outcome of that budget: a formally certified builder, not just an enthusiastic one, and early to a credential that's only months old.</p><span class="cert"><span style="width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block"></span> CCA · Foundations</span></div></div>
+      <div class="ask__row"><span class="k">E</span><div><span class="label">Reporting line</span><div class="val">Into the incoming Head of Production.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="room room--paper" id="r13" data-label="Measured on">
+  <span class="bignum">13</span>
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> 13 · Measured on</div>
+    <h2 class="title reveal d1">Hold me to <span class="serif">this</span></h2>
+    <div class="metrics reveal d1">
+      <div class="metric-col">
+        <h3>By 6 months</h3>
+        <ul>
+          <li>Every Fellas show using at least one shared system<small>Coverage across the slate</small></li>
+          <li>Bespoke tools built for <span class="fig">a few</span> shows<small>Live builds in production</small></li>
+          <li>Spreadsheets retired<small>Target to agree together</small></li>
+        </ul>
+      </div>
+      <div class="metric-col">
+        <h3>By 12 months</h3>
+        <ul>
+          <li>All pods on the unified system layer<small>One shared spine</small></li>
+          <li>A tool built for or with <span class="fig">every</span> show<small>No pod left out</small></li>
+          <li>First Fellas-built tool exported to a Global studio<small>The role pays outward</small></li>
+          <li><span class="fig" id="metricHrs">690</span> hrs/year saved across production<small>Live from the calculator below</small></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="title reveal d1" style="font-size:clamp(22px,3vw,34px);margin-top:64px">Put a number on it</h3>
+    <p class="sub ink reveal d1">Drag the sliders. A rough model to size the prize, not a promise. The year figure feeds the 12-month target above.</p>
+    <div class="roi reveal d1" style="margin-top:28px">
+      <div class="grid split">
+        <div>
+          <div class="ctl"><label>Shows on shared tooling <b id="vShows">5</b></label><input type="range" id="rShows" min="1" max="8" value="5"></div>
+          <div class="ctl"><label>Hours saved / show / week <b id="vHrs">3</b></label><input type="range" id="rHrs" min="0" max="12" value="3" step="0.5"></div>
+        </div>
+        <div class="roi-out">
+          <div><div class="big" id="oWeek">15</div><div class="cap">hours / week returned</div></div>
+          <div><div class="big" id="oYear">690</div><div class="cap">hours / year (≈ <span id="oDays">92</span> working days)</div></div>
+        </div>
+      </div>
+      <p class="roi-note">Year assumes ~46 working weeks. Hours / week = shows × hours saved. This is the "is it worth it" answer, in your own numbers, before a penny of tooling spend.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer" id="rEnd" data-label="Close">
+  <div class="wrap">
+    <div class="big reveal">Let me own <span class="serif">what's next.</span></div>
+    <a class="cta reveal d1" href="#r0" data-cur="top">Back to top ↑</a>
+    <div class="footer__base reveal d1">
+      <span id="footByline">ERIN · NEW FORMATS &amp; INNOVATIONS PRODUCER</span>
+      <span>FELLAS STUDIOS → GLOBAL</span>
+      <span>A PROPOSAL · 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COARSE = matchMedia('(pointer: coarse)').matches;
+
+/* ===== CONFIG ===== */
+const CONFIG = { presenterName:"Erin", managerName:"[Manager]" };
+(function(){
+  const up=s=>(s||"").toUpperCase();
+  document.getElementById('byline').textContent='A Proposal · '+CONFIG.presenterName+' → '+CONFIG.managerName;
+  document.getElementById('footByline').textContent=up(CONFIG.presenterName)+' · NEW FORMATS & INNOVATIONS PRODUCER';
+})();
+
+/* ===== reveal + title underline ===== */
+(function(){
+  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12,rootMargin:"0px 0px -5% 0px"});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const io2=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('lit');io2.unobserve(e.target);}}),{threshold:.5});
+  document.querySelectorAll('h2.title').forEach(el=>io2.observe(el));
+  const hub=document.getElementById('hub');
+  if(hub){const io3=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){hub.classList.add('lit');io3.disconnect();}}),{threshold:.3});io3.observe(hub);}
+})();
+
+/* ===== cursor ===== */
+(function(){
+  if(COARSE)return;
+  const dot=document.getElementById('cdot'),ring=document.getElementById('cring'),lab=document.getElementById('clab');
+  let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+  addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`;});
+  (function loop(){rx+=(mx-rx)*.2;ry+=(my-ry)*.2;ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;requestAnimationFrame(loop);})();
+  window._bindCur=function(){document.querySelectorAll('a,button,[data-cur],.panel,.chip,.hub-node,.obj__q,.litem,input[type=range],.ts-list li').forEach(el=>{
+    if(el._b)return;el._b=1;
+    el.addEventListener('mouseenter',()=>{ring.classList.add('hov');lab.textContent=el.getAttribute('data-cur')||'';});
+    el.addEventListener('mouseleave',()=>{ring.classList.remove('hov');lab.textContent='';});
+  });};
+  window._bindCur();
+})();
+
+/* ===== rail + progress ===== */
+const rooms=[...document.querySelectorAll('.room, .footer')];
+(function(){
+  const rail=document.getElementById('rail');
+  rooms.forEach(r=>{const b=document.createElement('button');b.innerHTML=`<span class="rl">${r.getAttribute('data-label')||''}</span><span class="pip"></span>`;b.addEventListener('click',()=>r.scrollIntoView({behavior:RM?'auto':'smooth'}));rail.appendChild(b);});
+  const pips=[...rail.querySelectorAll('button')];
+  function upd(){const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+    document.getElementById('progress').style.transform=`scaleX(${h>0?y/h:0})`;
+    const mid=y+innerHeight*.5;let a=0;rooms.forEach((r,i)=>{if(r.offsetTop<=mid)a=i;});
+    pips.forEach((p,i)=>p.setAttribute('aria-current',i===a?'true':'false'));
+    const ar=rooms[a],dark=ar.classList.contains('room--dark')||ar.classList.contains('footer');
+    rail.classList.toggle('on-dark',dark);rail.classList.toggle('on-paper',!dark);}
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+})();
+
+/* ===== hub ===== */
+(function(){
+  const svg=document.getElementById('hubSvg'),NS="http://www.w3.org/2000/svg";
+  const data=[
+    {name:"Punchin'",builds:["Call sheets","Guest database","Vlog tools"]},
+    {name:"Back Side",builds:["Master platform","Guestlist tracking","Sweepstake"]},
+    {name:"Pitch Side",builds:["Quiz games","Clip selection"]},
+    {name:"Not My Bagg",builds:["Shoot-day app","Talent tracking"]},
+    {name:"Campaigns",builds:["Oversight hive","To-do kanban"]},
+    {name:"Global",builds:["Exported tools","Studio support"]}
+  ];
+  const cx=300,cy=215,R=150;const lines=[];
+  data.forEach((d,i)=>{const a=(-90+i*(360/data.length))*Math.PI/180;d.x=cx+R*Math.cos(a);d.y=cy+R*Math.sin(a);
+    const ln=document.createElementNS(NS,'line');ln.setAttribute('x1',cx);ln.setAttribute('y1',cy);ln.setAttribute('x2',d.x);ln.setAttribute('y2',d.y);ln.setAttribute('class','hub-line');svg.appendChild(ln);lines.push(ln);});
+  const cg=document.createElementNS(NS,'g');cg.setAttribute('class','hub-center');
+  const cc=document.createElementNS(NS,'circle');cc.setAttribute('cx',cx);cc.setAttribute('cy',cy);cc.setAttribute('r',46);cg.appendChild(cc);
+  const ct1=document.createElementNS(NS,'text');ct1.setAttribute('x',cx);ct1.setAttribute('y',cy-2);ct1.setAttribute('text-anchor','middle');ct1.setAttribute('font-size','12');ct1.textContent='Formats';cg.appendChild(ct1);
+  const ct2=document.createElementNS(NS,'text');ct2.setAttribute('x',cx);ct2.setAttribute('y',cy+14);ct2.setAttribute('text-anchor','middle');ct2.setAttribute('font-size','12');ct2.textContent='& Innov.';cg.appendChild(ct2);
+  svg.appendChild(cg);
+  const nodes=[];
+  data.forEach((d,i)=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','hub-node');g.setAttribute('data-cur','view');
+    const c=document.createElementNS(NS,'circle');c.setAttribute('cx',d.x);c.setAttribute('cy',d.y);c.setAttribute('r',36);c.setAttribute('fill','var(--paper-2)');c.setAttribute('stroke','var(--hl-p)');c.setAttribute('stroke-width','1.5');
+    const t=document.createElementNS(NS,'text');t.setAttribute('x',d.x);t.setAttribute('y',d.y+4);t.setAttribute('text-anchor','middle');t.textContent=d.name;
+    g.appendChild(c);g.appendChild(t);svg.appendChild(g);
+    const sel=()=>{nodes.forEach(n=>n.classList.remove('active'));lines.forEach(l=>l.classList.remove('active'));g.classList.add('active');lines[i].classList.add('active');
+      document.getElementById('hubPanel').innerHTML=`<div class="pn">${d.name}</div><h5>What I'd build</h5><ul>${d.builds.map(b=>`<li>${b}</li>`).join('')}</ul>`;};
+    g.addEventListener('click',sel);g.addEventListener('mouseenter',sel);nodes.push(g);});
+  if(window._bindCur)window._bindCur();
+})();
+
+/* ===== stacks ===== */
+(function(){
+  const desc=document.getElementById('stackDesc'),base=desc.textContent;
+  document.querySelectorAll('#stack .chip, #stack2 .chip').forEach(ch=>{
+    ch.addEventListener('mouseenter',()=>{document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));ch.classList.add('on');desc.innerHTML='<b>'+ch.textContent+'</b> — '+ch.getAttribute('data-d');});
+  });
+})();
+
+/* ===== tabs ===== */
+(function(){
+  document.querySelectorAll('#tabs .tab').forEach(t=>{t.addEventListener('click',()=>{
+    document.querySelectorAll('#tabs .tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+    document.querySelectorAll('.toolpanel').forEach(p=>p.classList.remove('on'));
+    document.getElementById('tp-'+t.getAttribute('data-tab')).classList.add('on');
+    if(t.getAttribute('data-tab')==='wh'&&window._placeWheel)setTimeout(window._placeWheel,30);
+  });});
+})();
+
+/* ===== note-taker ===== */
+(function(){
+  const time=document.getElementById('ntTime'),toggle=document.getElementById('ntToggle'),mark=document.getElementById('ntMark'),list=document.getElementById('ntList');
+  let sec=0,running=false,timer=null;
+  const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  toggle.addEventListener('click',()=>{running=!running;toggle.textContent=running?'Pause':'Start';time.classList.toggle('rec',running);
+    if(running){timer=setInterval(()=>{sec++;time.textContent=fmt(sec);},1000);}else{clearInterval(timer);}});
+  mark.addEventListener('click',()=>{
+    const empty=list.querySelector('.nt-empty');if(empty)empty.remove();
+    const li=document.createElement('li');li.innerHTML=`<span class="ts">${fmt(sec)}</span><input value="New note…">`;
+    list.prepend(li);const inp=li.querySelector('input');inp.focus();inp.select();
+    if(window._bindCur)window._bindCur();
+  });
+})();
+
+/* ===== task setter ===== */
+(function(){
+  const list=document.getElementById('tsList'),bar=document.getElementById('tsBar'),items=[...list.children];
+  function upd(){const done=items.filter(i=>i.classList.contains('done')).length;bar.style.width=(done/items.length*100)+'%';}
+  items.forEach(li=>li.addEventListener('click',()=>{li.classList.toggle('done');upd();}));
+})();
+
+/* ===== wheel (two modes) ===== */
+(function(){
+  const sets={
+    tools:["Call sheets","Handovers","Quizzes","Dashboards","Outreach","Guest DBs","Sweepstakes","Note-taker"],
+    vlog:["Pub golf","Stag do","Masterchef","Challenge","City trip","Quiz night","Head to head","Wildcard"]
+  };
+  let mode="tools",segs=sets[mode];
+  const wheel=document.getElementById('wheel'),out=document.getElementById('wheelOut'),btn=document.getElementById('spinBtn');
+  let N,slice,ri,labels=[],rot=0,spin=false;
+  function render(){
+    segs=sets[mode];N=segs.length;slice=360/N;ri=N-1;
+    const tones=[];for(let i=0;i<N;i++){let c=(i%2===0)?"#17110f":"#251c19";if(i===ri)c="#fe1e34";tones.push(`${c} ${i*slice}deg ${(i+1)*slice}deg`);}
+    wheel.style.background=`conic-gradient(from -${slice/2}deg, ${tones.join(",")})`;
+    [...wheel.querySelectorAll('.wheel-seg-label')].forEach(l=>l.remove());
+    labels=segs.map((s,i)=>{const l=document.createElement('div');l.className='wheel-seg-label';l.textContent=s;l.style.transformOrigin='center';if(i===ri)l.style.color="#0d0c0b";wheel.appendChild(l);return l;});
+    place();
+  }
+  function place(){const size=wheel.clientWidth||320,r=size*.33,c=size/2;labels.forEach((l,i)=>{const a=(i*slice)*Math.PI/180,x=c+r*Math.sin(a),y=c-r*Math.cos(a);l.style.left=x+'px';l.style.top=y+'px';l.style.transform='translate(-50%,-50%)';});}
+  window._placeWheel=place;
+  document.querySelectorAll('#wheelModes button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#wheelModes button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.getAttribute('data-mode');out.textContent="";render();
+  }));
+  btn.addEventListener('click',()=>{if(spin)return;spin=true;out.textContent="";
+    const pick=Math.floor(Math.random()*N),turns=4+Math.floor(Math.random()*3);
+    rot=rot-(rot%360)+turns*360+(360-pick*slice);wheel.style.transform=`rotate(${rot}deg)`;
+    const done=()=>{spin=false;out.innerHTML=(mode==='tools'?'It built: ':'Next vlog: ')+'<b>'+segs[pick]+'</b>';wheel.removeEventListener('transitionend',done);};
+    if(RM)setTimeout(done,300);else wheel.addEventListener('transitionend',done);});
+  render();addEventListener('resize',place);
+})();
+
+/* ===== objections ===== */
+(function(){
+  const rows=[...document.querySelectorAll('#obj .obj__row')];
+  rows.forEach(r=>r.querySelector('.obj__q').addEventListener('click',()=>{const o=r.classList.contains('open');rows.forEach(x=>x.classList.remove('open'));if(!o)r.classList.add('open');}));
+})();
+
+/* ===== title try-on ===== */
+(function(){
+  const hero=document.getElementById('heroTitle'),askT=document.getElementById('askTitle');
+  document.querySelectorAll('#tryon button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#tryon button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    const t=b.getAttribute('data-t');
+    askT.innerHTML=t+' <span class="serif">(promotion, banding reviewed accordingly)</span>';
+    // hero: split into words, italicise last word for style
+    const words=t.replace(/&amp;/g,'&').split(' ');
+    const last=words.pop();
+    hero.innerHTML=words.join(' ')+'<br><span class="serif">'+last+'</span>';
+  }));
+})();
+
+/* ===== ROI ===== */
+(function(){
+  const rShows=document.getElementById('rShows'),rHrs=document.getElementById('rHrs');
+  const vShows=document.getElementById('vShows'),vHrs=document.getElementById('vHrs');
+  const oWeek=document.getElementById('oWeek'),oYear=document.getElementById('oYear'),oDays=document.getElementById('oDays'),metricHrs=document.getElementById('metricHrs');
+  function animateTo(el,target){const start=parseFloat((el.textContent||'0').replace(/,/g,''))||0,dur=420,t0=performance.now();
+    function step(t){const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,3);el.textContent=Math.round(start+(target-start)*e);if(k<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+  function calc(){const shows=+rShows.value,hrs=+rHrs.value;vShows.textContent=shows;vHrs.textContent=hrs;
+    const week=Math.round(shows*hrs),year=Math.round(week*46),days=Math.round(year/7.5);
+    animateTo(oWeek,week);animateTo(oYear,year);animateTo(oDays,days);if(metricHrs)animateTo(metricHrs,year);}
+  [rShows,rHrs].forEach(r=>r.addEventListener('input',calc));calc();
+})();
+
+/* ===== travel dot ===== */
+(function(){
+  const dot=document.getElementById('travelDot');if(!dot||RM)return;let t=0;
+  function path(p){return[(1-p)*(1-p)*100+2*(1-p)*p*200+p*p*300,(1-p)*(1-p)*158+2*(1-p)*p*40+p*p*95];}
+  setInterval(()=>{t=(t+0.012)%1;const[x,y]=path(t);dot.setAttribute('cx',x);dot.setAttribute('cy',y);},30);
+})();
+</script>
+</body>
+</html>
